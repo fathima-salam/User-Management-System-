@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { adminLogin } from "../../../redux-toolkit/adminDataReducer";
 import toast from "react-hot-toast";
-import { useEffect } from "react";
 
 const AdminLogin = () => {
     const [email, setEmail] = useState("");
@@ -11,16 +10,16 @@ const AdminLogin = () => {
     const [showPassword, setShowPassword] = useState(false);
 
     const isAuthenticated = useSelector((state) => state.adminData.isAuthenticated);
-    const loading = useSelector((state) => state.adminData.loading)
-
-    useEffect(() => {
-        if (isAuthenticated) {
-            navigate('/dashboard')
-        }
-    }, [isAuthenticated])
+    const loading = useSelector((state) => state.adminData.loading);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate('/dashboard');
+        }
+    }, [isAuthenticated, navigate]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -31,105 +30,105 @@ const AdminLogin = () => {
                 navigate('/dashboard');
             })
             .catch((err) => {
-                toast.error(err.message || 'Something went wrong, please try again.')
+                toast.error(err.message || 'Something went wrong, please try again.');
                 console.log(err);
-            })
-
+            });
     };
 
     return (
-        <div className="font-sans text-gray-900 antialiased">
+        <div className="min-h-screen bg-black flex items-center justify-center p-4">
             {
                 loading && (
-                    <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
-                        <div className="bg-white p-6 rounded-lg shadow-lg flex items-center space-x-4">
-                            <div className="w-8 h-8 border-4 border-[#002f34] border-t-transparent rounded-full animate-spin"></div>
+                    <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
+                        <div className="bg-white p-6 rounded-lg shadow-2xl flex items-center space-x-4">
+                            <div className="w-8 h-8 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
                             <span className="text-lg font-semibold text-gray-800">Loading...</span>
                         </div>
                     </div>
                 )
             }
 
-            <div className="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-[#f8f4f3]">
-                <div>
-                    <a href="/">
-                        <h2 className="font-bold text-3xl">
-                            ADMIN{" "}
-                            <span className="bg-[#f84525] text-white px-2 rounded-md">
-                                LOGIN
-                            </span>
-                        </h2>
-                    </a>
+            <div className="w-full max-w-md">
+                {/* Header */}
+                <div className="text-center mb-8">
+                    <h1 className="text-4xl font-bold text-white mb-2">
+                        ADMIN <span className="bg-white text-black px-3 py-1 rounded-md">LOGIN</span>
+                    </h1>
+                    <p className="text-gray-400 mt-4">Access administrative dashboard</p>
                 </div>
 
-                <div className="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md sm:rounded-lg">
-                    <form onSubmit={handleSubmit}>
-                        <div className="py-8">
-                            <center>
-                                <span className="text-2xl font-semibold">Log In</span>
-                            </center>
-                        </div>
+                {/* Login Card */}
+                <div className="bg-gray-900 border-2 border-gray-800 rounded-lg p-8 shadow-2xl">
+                    <div className="text-center mb-8">
+                        <h2 className="text-2xl font-bold text-white tracking-wide">LOG IN</h2>
+                        <p className="text-gray-400 text-sm mt-2">Enter your credentials to continue</p>
+                    </div>
 
-                        <div>
+                    <form onSubmit={handleSubmit}>
+                        <div className="mb-6">
                             <label
                                 htmlFor="email"
-                                className="block font-medium text-sm text-gray-700"
+                                className="block mb-2 font-bold text-white text-sm tracking-wide"
                             >
-                                Email
+                                EMAIL
                             </label>
                             <input
                                 type="email"
                                 id="email"
-                                placeholder="Email"
+                                placeholder="admin@example.com"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-full rounded-md py-2.5 px-4 border text-sm outline-[#f84525]"
+                                className="w-full p-3 border-2 border-gray-700 bg-black text-white text-base outline-none focus:border-white focus:shadow-[4px_4px_0px_#ffffff] transition-all duration-300 rounded"
                                 required
                             />
                         </div>
 
-                        <div className="mt-4">
+                        <div className="mb-6">
                             <label
                                 htmlFor="password"
-                                className="block font-medium text-sm text-gray-700"
+                                className="block mb-2 font-bold text-white text-sm tracking-wide"
                             >
-                                Password
+                                PASSWORD
                             </label>
                             <div className="relative">
                                 <input
                                     type={showPassword ? "text" : "password"}
                                     id="password"
-                                    placeholder="Password"
+                                    placeholder="••••••••"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full rounded-md py-2.5 px-4 border text-sm outline-[#f84525]"
+                                    className="w-full p-3 border-2 border-gray-700 bg-black text-white text-base outline-none focus:border-white focus:shadow-[4px_4px_0px_#ffffff] transition-all duration-300 rounded pr-20"
                                     required
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700"
+                                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-white transition-colors text-sm font-semibold"
                                 >
-                                    {showPassword ? "Hide" : "Show"}
+                                    {showPassword ? "HIDE" : "SHOW"}
                                 </button>
                             </div>
                         </div>
 
-
-                        <div className="flex items-center justify-between mt-4">
-                            <a
-                                className="hover:underline text-sm text-gray-600 hover:text-gray-900"
-                            >
-                            </a>
-
-                            <button
-                                type="submit"
-                                className="ms-4 inline-flex items-center px-4 py-2 bg-[#f84525] border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-800 transition ease-in-out duration-150"
-                            >
-                                Sign In
-                            </button>
-                        </div>
+                        <button
+                            type="submit"
+                            className="w-full p-3 bg-white text-black border-2 border-white text-base font-bold cursor-pointer mt-4 hover:shadow-[6px_6px_0px_#ffffff] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-300 rounded tracking-wide"
+                        >
+                            SIGN IN
+                        </button>
                     </form>
+                </div>
+
+                {/* Footer Info */}
+                <div className="mt-8 text-center">
+                    <div className="bg-gray-900 border border-gray-800 rounded-lg p-4">
+                        <div className="flex items-center justify-center space-x-2 text-gray-400 text-sm">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                            <span>Secure admin access with encryption</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

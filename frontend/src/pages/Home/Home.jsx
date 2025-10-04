@@ -51,7 +51,6 @@ function Home() {
                         <button
                             onClick={() => {
                                 dispatch(clearError());
-                                setData({ name, email });
                             }}
                             className="ml-4 text-gray-400 hover:text-gray-600 transition"
                         >
@@ -65,38 +64,54 @@ function Home() {
     }
 
     return (
-        <div>
+        <div className="min-h-screen bg-black">
             {
                 loading && (
-                    <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
-                        <div className="bg-white p-6 rounded-lg shadow-lg flex items-center space-x-4">
-                            <div className="w-8 h-8 border-4 border-[#002f34] border-t-transparent rounded-full animate-spin"></div>
+                    <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
+                        <div className="bg-white p-6 rounded-lg shadow-2xl flex items-center space-x-4">
+                            <div className="w-8 h-8 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
                             <span className="text-lg font-semibold text-gray-800">Loading...</span>
                         </div>
                     </div>
                 )
             }
 
-            <nav className="bg-white border-gray-200 dark:bg-gray-900">
-                <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-                    <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Home Page</span>
+            {/* Navigation */}
+            <nav className="bg-black border-b border-gray-800 shadow-lg">
+                <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-6">
+                    <span className="self-center text-2xl font-bold text-white tracking-wide">User Management System</span>
                     <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-
                         {
-                            token ? <div>
-                                <a className='text-white mr-6 hover:underline cursor-pointer hover:text-blue-700' onClick={() => navigate('/profile')}>Profile</a>
-                                <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={handleLogout}>Logout</button>
+                            token ? <div className="flex items-center gap-4">
+                                <a className='text-white font-medium hover:text-gray-300 cursor-pointer transition-colors' onClick={() => navigate('/profile')}>Profile</a>
+                                <button type="button" className="text-black bg-white hover:bg-gray-200 font-medium rounded-lg text-sm px-6 py-2.5 transition-all duration-200" onClick={handleLogout}>Logout</button>
                             </div> :
-                                <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={() => navigate('/login')}>Login</button>
-
+                                <button type="button" className="text-black bg-white hover:bg-gray-200 font-medium rounded-lg text-sm px-6 py-2.5 transition-all duration-200" onClick={() => navigate('/login')}>Login</button>
                         }
-
                     </div>
-
                 </div>
             </nav>
 
-            <h1 className='text-center text-3xl text-blue-900 m-[20%]'>Hello {name ? name : 'Guest'}</h1>
+            {/* Hero Section */}
+            <div className="min-h-screen grid place-items-center">
+                <div className="max-w-screen-xl mx-auto px-4 py-16">
+                    <div className="text-center mb-16">
+                        <h1 className='text-5xl font-bold text-white mb-4'>
+                            Welcome Back, <span className="text-gray-300">{name ? name : 'Guest'}</span>
+                        </h1>
+                        <p className="text-gray-400 text-lg">Your personalized dashboard for managing your account</p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Footer */}
+            <footer className="bg-black border-t border-gray-800 mt-16">
+                <div className="max-w-screen-xl mx-auto px-4 py-8">
+                    <p className="text-center text-gray-500 text-sm">
+                        © 2024 User Management System. All rights reserved. Built with security and user experience in mind.
+                    </p>
+                </div>
+            </footer>
         </div>
     )
 }

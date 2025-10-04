@@ -32,7 +32,6 @@ export const imageUpdateUpload = createAsyncThunk('user/imageUpdateUpload', asyn
     try {
         const response = await axios.post(`http://localhost:5001/api/user/update-profile`, data, {
             headers: {
-                "Content-Type": "multipart/form-data",
                 Authorization: `Bearer ${token}`,
             },
         });

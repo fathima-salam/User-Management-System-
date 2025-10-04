@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import "./Register.css";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { clearError, setUserData } from "../../../redux-toolkit/userDataReducer";
@@ -27,7 +26,7 @@ function Register() {
   const [error, setError] = useState({
     type: '',
     message: ''
-  })
+  });
 
   function validation(data) {
     const { name, email, password } = data;
@@ -53,7 +52,7 @@ function Register() {
     const validationResult = validation(data);
     if (!validationResult.valid) {
       toast.error(validationResult.message);
-      setError({type:validationResult.type,message:validationResult.message})
+      setError({type: validationResult.type, message: validationResult.message});
       return;
     }
     dispatch(setUserData(data))
@@ -75,84 +74,103 @@ function Register() {
       [name]: value,
     }));
   }
- 
 
   return (
-    <div className="register-page">
+    <div className="min-h-screen bg-black flex items-center justify-center p-4">
       {loading && (
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg flex items-center space-x-4">
-            <div className="w-8 h-8 border-4 border-[#002f34] border-t-transparent rounded-full animate-spin"></div>
+        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-2xl flex items-center space-x-4">
+            <div className="w-8 h-8 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
             <span className="text-lg font-semibold text-gray-800">Loading...</span>
           </div>
         </div>
       )}
-      <div className="login-container">
-        <h1 className="text-2xl font-bold mb-7 text-black text-center">Register</h1>
-        <form onSubmit={handleSubmit}>
-          <div className="input-group mb-5">
-            <label htmlFor="username" className="block mb-2 font-bold text-black">
-              USERNAME
-            </label>
-            <input
-              type="text"
-              required
-              name="name"
-              id="username"
-              onChange={handleChange}
-              placeholder="username"
-              value={data.name}
-              className="w-full p-3 border-2 border-black bg-white text-base outline-none focus:shadow-[4px_4px_0px_#000000] transition-all duration-300"
-            />
-            {error.type === 'name' ? <p className="text-red-500 mt-2">{error.message}</p> : null}
-          </div>
 
-          <div className="input-group mb-5">
-            <label htmlFor="email" className="block mb-2 font-bold text-black">
-              EMAIL
-            </label>
-            <input
-              type="email"
-              required
-              name="email"
-              onChange={handleChange}
-              value={data.email}
-              id="email"
-              placeholder="your@email.com"
-              className="w-full p-3 border-2 border-black bg-white text-base outline-none focus:shadow-[4px_4px_0px_#000000] transition-all duration-300"
-            />
-            {error.type === 'email' ? <p className="text-red-500 mt-2">{error.message}</p> : null}
-          </div>
+      <div className="w-full max-w-md">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-white mb-2">User Management</h1>
+          <p className="text-gray-400">Create your account</p>
+        </div>
 
-          <div className="input-group mb-5">
-            <label htmlFor="password" className="block mb-2 font-bold text-black">
-              PASSWORD
-            </label>
-            <input
-              required
-              name="password"
-              onChange={handleChange}
-              value={data.password}
-              type="password"
-              id="password"
-              placeholder="••••••••"
-              className="w-full p-3 border-2 border-black bg-white text-base outline-none focus:shadow-[4px_4px_0px_#000000] transition-all duration-300"
-            />
-            {error.type === 'password' ? <p className="text-red-500 mt-2">{error.message}</p> : null}
-          </div>
+        {/* Register Card */}
+        <div className="bg-gray-900 border-2 border-gray-800 rounded-lg p-8 shadow-2xl">
+          <h2 className="text-2xl font-bold mb-8 text-white text-center tracking-wide">REGISTER</h2>
+          
+          <form onSubmit={handleSubmit}>
+            <div className="mb-5">
+              <label htmlFor="username" className="block mb-2 font-bold text-white text-sm tracking-wide">
+                USERNAME
+              </label>
+              <input
+                type="text"
+                required
+                name="name"
+                id="username"
+                onChange={handleChange}
+                placeholder="username"
+                value={data.name}
+                className="w-full p-3 border-2 border-gray-700 bg-black text-white text-base outline-none focus:border-white focus:shadow-[4px_4px_0px_#ffffff] transition-all duration-300 rounded"
+              />
+              {error.type === 'name' ? <p className="text-red-400 mt-2 text-sm">{error.message}</p> : null}
+            </div>
 
-          <button
-            type="submit"
-            className="w-full p-3 bg-[#FF5E5B] text-white border-2 border-black text-base font-bold cursor-pointer mt-2.5 hover:shadow-[4px_4px_0px_#000000] hover:-translate-x-2 hover:-translate-y-2 transition-all duration-300"
-          >
-            SIGN UP
-          </button>
-        </form>
-        <div className="footer mt-5 text-center text-black">
-          You have an account?{" "}
-          <a onClick={() => navigate("/login")} className="font-bold text-black underline">
-            Sign in
-          </a>
+            <div className="mb-5">
+              <label htmlFor="email" className="block mb-2 font-bold text-white text-sm tracking-wide">
+                EMAIL
+              </label>
+              <input
+                type="email"
+                required
+                name="email"
+                onChange={handleChange}
+                value={data.email}
+                id="email"
+                placeholder="your@email.com"
+                className="w-full p-3 border-2 border-gray-700 bg-black text-white text-base outline-none focus:border-white focus:shadow-[4px_4px_0px_#ffffff] transition-all duration-300 rounded"
+              />
+              {error.type === 'email' ? <p className="text-red-400 mt-2 text-sm">{error.message}</p> : null}
+            </div>
+
+            <div className="mb-5">
+              <label htmlFor="password" className="block mb-2 font-bold text-white text-sm tracking-wide">
+                PASSWORD
+              </label>
+              <input
+                required
+                name="password"
+                onChange={handleChange}
+                value={data.password}
+                type="password"
+                id="password"
+                placeholder="••••••••"
+                className="w-full p-3 border-2 border-gray-700 bg-black text-white text-base outline-none focus:border-white focus:shadow-[4px_4px_0px_#ffffff] transition-all duration-300 rounded"
+              />
+              {error.type === 'password' ? <p className="text-red-400 mt-2 text-sm">{error.message}</p> : null}
+            </div>
+
+            <button
+              type="submit"
+              className="w-full p-3 bg-white text-black border-2 border-white text-base font-bold cursor-pointer mt-4 hover:shadow-[6px_6px_0px_#ffffff] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-300 rounded tracking-wide"
+            >
+              SIGN UP
+            </button>
+          </form>
+
+          <div className="mt-6 text-center text-gray-400 text-sm">
+            You have an account?{" "}
+            <a 
+              onClick={() => navigate("/login")} 
+              className="font-bold text-white underline cursor-pointer hover:text-gray-300 transition-colors"
+            >
+              Sign in
+            </a>
+          </div>
+        </div>
+
+        {/* Footer Text */}
+        <div className="text-center mt-8 text-gray-500 text-xs">
+          <p>Join thousands of users managing their accounts securely</p>
         </div>
       </div>
     </div>

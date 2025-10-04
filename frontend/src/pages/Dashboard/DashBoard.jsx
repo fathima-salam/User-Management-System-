@@ -5,7 +5,6 @@ import { logout } from "../../../redux-toolkit/adminDataReducer";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
-
 function Dashboard() {
     const isAuthenticated = useSelector((state) => state.adminData.isAuthenticated);
     const dispatch = useDispatch();
@@ -29,7 +28,7 @@ function Dashboard() {
 
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
-    const usersPerPage = 5;
+    const usersPerPage = 7;
 
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
@@ -38,10 +37,12 @@ function Dashboard() {
     const [formData, setFormData] = useState({ name: "", email: "", password: "" });
     const [load, setLoad] = useState(false);
 
+    // Filter out admin users and apply search term
     const filteredUsers = users.filter(
         (user) =>
-            user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            user.email.toLowerCase().includes(searchTerm.toLowerCase())
+            !user.isAdmin && // Exclude users where isAdmin is true
+            (user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                user.email.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
     const indexOfLastUser = currentPage * usersPerPage;
@@ -52,7 +53,7 @@ function Dashboard() {
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     const handleAddUser = () => {
-        setLoad(true)
+        setLoad(true);
         dispatch(addUser({ name: formData.name, email: formData.email, password: formData.password, token }))
             .unwrap()
             .then(() => {
@@ -65,12 +66,12 @@ function Dashboard() {
             .catch((err) => {
                 setLoad(false);
                 toast.error(err.message || "Failed to add user");
-            })
+            });
     };
 
     const handleUpdateUser = () => {
         if (selectedUser) {
-            setLoad(true)
+            setLoad(true);
             dispatch(updateUser({ id: selectedUser._id, name: formData.name, email: formData.email, token }))
                 .unwrap()
                 .then(() => {
@@ -79,31 +80,33 @@ function Dashboard() {
                     setSelectedUser(null);
                     setFormData({ name: "", email: "" });
                     dispatch(fetchUsers(token));
-                    setLoad(false)
+                    setLoad(false);
                 })
                 .catch((err) => {
-                    setLoad(false)
-                    toast.error(err.message || "Failed to update user")
+                    setLoad(false);
+                    toast.error(err.message || "Failed to update user");
                 });
         }
     };
+
     const handleDelete = () => {
         if (selectedUser) {
             setLoad(true);
-            dispatch(deleteUser({ id: selectedUser._id, token })).unwrap()
+            dispatch(deleteUser({ id: selectedUser._id, token }))
+                .unwrap()
                 .then(() => {
                     toast.success("User deleted successfully");
                     setDeleteModal(false);
                     setSelectedUser(null);
                     dispatch(fetchUsers(token));
-                    setLoad(false)
+                    setLoad(false);
                 })
                 .catch((err) => {
-                    setLoad(false)
-                    toast.error(err.message || "Failed to delete user")
+                    setLoad(false);
+                    toast.error(err.message || "Failed to delete user");
                 });
         }
-    }
+    };
 
     return (
         <div className="min-h-screen bg-gray-50 p-6">
@@ -128,12 +131,12 @@ function Dashboard() {
                 <div className="flex justify-between items-center mb-8">
                     <h1 className="text-4xl font-bold text-gray-900">Admin Dashboard</h1>
                     <div className="space-x-4">
-                        <button
+                        {/* <button
                             className="bg-[#002f34] text-white px-6 py-3 rounded-lg hover:bg-teal-700 shadow-md transition"
                             onClick={() => dispatch(fetchUsers(token))}
                         >
                             Refresh Users
-                        </button>
+                        </button> */}
                         <button
                             className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 shadow-md transition"
                             onClick={() => {
@@ -179,25 +182,6 @@ function Dashboard() {
                     >
                         Add New User
                     </button>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition transform hover:-translate-y-1">
-                        <h3 className="text-lg font-semibold text-gray-700 mb-2">Total Users</h3>
-                        <p className="text-4xl font-bold text-[#002f34]">{users.length}</p>
-                    </div>
-                    <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition transform hover:-translate-y-1">
-                        <h3 className="text-lg font-semibold text-gray-700 mb-2">Admin Users</h3>
-                        <p className="text-4xl font-bold text-green-600">
-                            {users.filter((user) => user.isAdmin).length}
-                        </p>
-                    </div>
-                    <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition transform hover:-translate-y-1">
-                        <h3 className="text-lg font-semibold text-gray-700 mb-2">Regular Users</h3>
-                        <p className="text-4xl font-bold text-gray-600">
-                            {users.filter((user) => !user.isAdmin).length}
-                        </p>
-                    </div>
                 </div>
 
                 <div className="bg-white rounded-lg shadow-lg overflow-hidden">
@@ -255,27 +239,25 @@ function Dashboard() {
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        {!user.isAdmin ? <>
-
-                                            <button
-                                                className="text-[#002f34] hover:text-teal-700 mr-4 transition"
-                                                onClick={() => {
-                                                    setIsEditModalOpen(true);
-                                                    setSelectedUser(user);
-                                                    setFormData({ name: user.name, email: user.email });
-                                                }}
-                                            >
-                                                Edit
-                                            </button>
-                                            <button
-                                                className="text-red-600 hover:text-red-700 transition"
-                                                onClick={() => {
-                                                    setDeleteModal(true);
-                                                    setSelectedUser(user);
-                                                }}
-                                            >
-                                                Delete
-                                            </button> </>:null}
+                                        <button
+                                            className="text-[#002f34] hover:text-teal-700 mr-4 transition"
+                                            onClick={() => {
+                                                setIsEditModalOpen(true);
+                                                setSelectedUser(user);
+                                                setFormData({ name: user.name, email: user.email });
+                                            }}
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            className="text-red-600 hover:text-red-700 transition"
+                                            onClick={() => {
+                                                setDeleteModal(true);
+                                                setSelectedUser(user);
+                                            }}
+                                        >
+                                            Delete
+                                        </button>
                                     </td>
                                 </tr>
                             ))}
@@ -307,7 +289,7 @@ function Dashboard() {
                             <form
                                 onSubmit={(e) => {
                                     e.preventDefault();
-                                    handleAddUser()
+                                    handleAddUser();
                                 }}
                             >
                                 <div className="mb-4">
@@ -438,7 +420,6 @@ function Dashboard() {
                         </div>
                     </div>
                 )}
-
             </div>
         </div>
     );

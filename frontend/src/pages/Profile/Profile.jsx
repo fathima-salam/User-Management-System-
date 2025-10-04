@@ -7,8 +7,7 @@ import { toast } from "react-hot-toast";
 function Profile() {
   const [image, setImage] = useState(null);
   const [uploadLoading, setUploadLoading] = useState(false);
-  const loading = useSelector((state) => state.userData.loading)
-
+  const loading = useSelector((state) => state.userData.loading);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -24,7 +23,6 @@ function Profile() {
     name: name,
     email: email,
   });
-
 
   useEffect(() => {
     if (!token) {
@@ -50,9 +48,10 @@ function Profile() {
       })
       .catch((err) => {
         setUploadLoading(false);
-        toast.error(err.message.message || "Something went wrong in uploading image");
+        toast.error(err.message || "Something went wrong in uploading image");
       });
   };
+
   function validation(data) {
     const { name, email } = data;
 
@@ -67,6 +66,7 @@ function Profile() {
 
     return { valid: true, message: "Validation successful" };
   }
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const validationResult = validation(data);
@@ -84,131 +84,182 @@ function Profile() {
         setIsEditing(false);
         setData({ name: name, email: email });
         toast.error(err.message);
-        console.log(err)
+        console.log(err);
       });
   };
 
-
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="min-h-screen bg-black">
       {
         loading && (
-          <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg flex items-center space-x-4">
-              <div className="w-8 h-8 border-4 border-[#002f34] border-t-transparent rounded-full animate-spin"></div>
+          <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-lg shadow-2xl flex items-center space-x-4">
+              <div className="w-8 h-8 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
               <span className="text-lg font-semibold text-gray-800">Loading...</span>
             </div>
           </div>
         )
       }
 
-      <h1 onClick={() => navigate("/")} className="cursor-pointer text-blue-600 mb-4">
-        Back to home
-      </h1>
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Profile</h1>
+      {/* Navigation Bar */}
+      <nav className="bg-black border-b border-gray-800 shadow-lg">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+          <button
+            onClick={() => navigate("/")}
+            className="flex items-center text-white hover:text-gray-300 transition-colors font-medium"
+          >
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Back to Home
+          </button>
           <button
             onClick={() => {
               dispatch(logout());
               toast.success("Logout Successfully");
               navigate("/login");
             }}
-            className="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700"
+            className="bg-white text-black py-2 px-6 rounded-lg font-semibold hover:shadow-[4px_4px_0px_#ffffff] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-300"
           >
             Logout
           </button>
         </div>
+      </nav>
 
-        <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
-          <div className="relative">
-            {profileImage ? (
-              <img
-                src={profileImage}
-                alt="Profile"
-                className="w-32 h-32 rounded-full object-cover"
-              />
-            ) : (
-              <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center">
-                <span className="text-4xl text-gray-500">
-                  {name?.charAt(0)?.toUpperCase()}
-                </span>
-              </div>
-            )}
-            <form className="mt-4" onSubmit={handleProfileSubmit}>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => setImage(e.target.files[0])}
-                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
-              />
-              <button
-                type="submit"
-                className="mt-2 w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 disabled:opacity-50"
-                disabled={uploadLoading}
-              >
-                {uploadLoading ? "Uploading..." : "Upload Image"}
-              </button>
-            </form>
+      <div className="max-w-6xl mx-auto px-6 py-12">
+        {/* Header Section */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-white mb-2">Your Profile</h1>
+          <p className="text-gray-400">Manage your account information and settings</p>
+        </div>
+
+        {/* Main Profile Card */}
+        <div className="bg-gray-900 border-2 border-gray-800 rounded-lg shadow-2xl overflow-hidden">
+          {/* Profile Header */}
+          <div className="bg-gradient-to-r from-gray-800 to-gray-900 px-8 py-6 border-b border-gray-800">
+            <h2 className="text-2xl font-bold text-white">Account Details</h2>
           </div>
-          <div className="flex-1">
-            {isEditing ? (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    value={data.name}
-                    onChange={(e) => setData({ ...data, name: e.target.value })}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                  />
+
+          <div className="p-8">
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Left Section - Profile Picture */}
+              <div className="flex flex-col items-center md:items-start space-y-6">
+                <div className="text-center md:text-left w-full">
+                  <h3 className="text-lg font-bold text-white mb-4 tracking-wide">PROFILE PICTURE</h3>
+                  
+                  <div className="flex flex-col items-center space-y-4">
+                    {profileImage ? (
+                      <img
+                        src={profileImage}
+                        alt="Profile"
+                        className="w-40 h-40 rounded-full object-cover border-4 border-gray-700"
+                      />
+                    ) : (
+                      <div className="w-40 h-40 rounded-full bg-gray-800 border-4 border-gray-700 flex items-center justify-center">
+                        <span className="text-6xl text-white font-bold">
+                          {name?.charAt(0)?.toUpperCase()}
+                        </span>
+                      </div>
+                    )}
+
+                    <form className="w-full max-w-sm" onSubmit={handleProfileSubmit}>
+                      <div className="mb-4">
+                        <label className="block w-full cursor-pointer">
+                          <div className="border-2 border-gray-700 bg-black rounded-lg p-4 hover:border-white transition-all duration-300 text-center">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => setImage(e.target.files[0])}
+                              className="hidden"
+                            />
+                            <span className="text-gray-400 text-sm">
+                              {image ? image.name : "Choose an image file"}
+                            </span>
+                          </div>
+                        </label>
+                      </div>
+                      <button
+                        type="submit"
+                        className="w-full bg-white text-black py-3 px-4 rounded-lg font-bold hover:shadow-[4px_4px_0px_#ffffff] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled={uploadLoading}
+                      >
+                        {uploadLoading ? "Uploading..." : "Upload Image"}
+                      </button>
+                    </form>
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    value={data.email}
-                    onChange={(e) => setData({ ...data, email: e.target.value })}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                  />
-                </div>
-                <div className="flex space-x-2">
-                  <button
-                    type="submit"
-                    className="bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700"
-                  >
-                    Save
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setData({ name: name, email: email });
-                      setIsEditing(false);
-                    }}
-                    className="bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            ) : (
-              <div className="space-y-4">
-                <h2 className="text-2xl font-bold">{name}</h2>
-                <p className="text-gray-600">{email}</p>
-                <button
-                  onClick={() => setIsEditing(true)}
-                  className="bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700"
-                >
-                  Edit Profile
-                </button>
               </div>
-            )}
+
+              {/* Right Section - User Information */}
+              <div>
+                <h3 className="text-lg font-bold text-white mb-6 tracking-wide">USER INFORMATION</h3>
+                
+                {isEditing ? (
+                  <form onSubmit={handleSubmit} className="space-y-5">
+                    <div>
+                      <label className="block mb-2 font-bold text-white text-sm tracking-wide">
+                        NAME
+                      </label>
+                      <input
+                        type="text"
+                        value={data.name}
+                        onChange={(e) => setData({ ...data, name: e.target.value })}
+                        className="w-full p-3 border-2 border-gray-700 bg-black text-white rounded-lg outline-none focus:border-white focus:shadow-[4px_4px_0px_#ffffff] transition-all duration-300"
+                      />
+                    </div>
+                    <div>
+                      <label className="block mb-2 font-bold text-white text-sm tracking-wide">
+                        EMAIL
+                      </label>
+                      <input
+                        type="email"
+                        value={data.email}
+                        onChange={(e) => setData({ ...data, email: e.target.value })}
+                        className="w-full p-3 border-2 border-gray-700 bg-black text-white rounded-lg outline-none focus:border-white focus:shadow-[4px_4px_0px_#ffffff] transition-all duration-300"
+                      />
+                    </div>
+                    <div className="flex space-x-3 pt-4">
+                      <button
+                        type="submit"
+                        className="flex-1 bg-white text-black py-3 px-4 rounded-lg font-bold hover:shadow-[4px_4px_0px_#ffffff] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-300"
+                      >
+                        Save Changes
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setData({ name: name, email: email });
+                          setIsEditing(false);
+                        }}
+                        className="flex-1 bg-gray-800 text-white border-2 border-gray-700 py-3 px-4 rounded-lg font-bold hover:border-white transition-all duration-300"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  <div className="space-y-6">
+                    <div className="bg-gray-800 border-2 border-gray-700 rounded-lg p-5">
+                      <label className="block text-gray-400 text-sm font-semibold mb-2">NAME</label>
+                      <p className="text-white text-xl font-semibold">{name}</p>
+                    </div>
+                    <div className="bg-gray-800 border-2 border-gray-700 rounded-lg p-5">
+                      <label className="block text-gray-400 text-sm font-semibold mb-2">EMAIL</label>
+                      <p className="text-white text-xl font-semibold">{email}</p>
+                    </div>
+                    <button
+                      onClick={() => setIsEditing(true)}
+                      className="w-full bg-white text-black py-3 px-4 rounded-lg font-bold hover:shadow-[4px_4px_0px_#ffffff] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-300 mt-6"
+                    >
+                      Edit Profile
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
+        
       </div>
     </div>
   );

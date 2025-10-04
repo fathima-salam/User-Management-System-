@@ -140,12 +140,26 @@ export const updateData = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
     try {
+
+        console.log("=== DEBUG INFO ===");
+        console.log("Content-Type:", req.headers['content-type']);
+        console.log("req.body:", req.body);
+        console.log("req.file:", req.file);
+        console.log("req.files:", req.files);
+        console.log("==================");
+
+        if (!req.file) {
+            return res.status(400).json({ message: "No file uploaded. Please select an image." });
+        }
+
         const user = await User.findById(req.user.id);
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
+
         user.profileImage = req.file.path;
-        await user.save({ validateBeforeSave: false })
+        await user.save({ validateBeforeSave: false });
+
         res.json({
             message: 'Profile image uploaded successfully',
             user: {
@@ -157,7 +171,7 @@ export const updateProfile = async (req, res) => {
                 createdAt: user.createdAt,
                 updatedAt: user.updatedAt,
             },
-        })
+        });
     } catch (error) {
         if (error.name === "ValidationError") {
             const messages = Object.values(error.errors).map(val => val.message);
