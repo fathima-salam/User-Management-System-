@@ -9,7 +9,6 @@ dotenv.config();
 
 const app = express();
 
-// CORS should be before other middleware
 const allowedOrigins = ['http://localhost:5173'];
 app.use(cors({
     origin: function (origin, callback) {
