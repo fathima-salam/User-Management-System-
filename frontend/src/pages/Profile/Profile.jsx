@@ -24,11 +24,21 @@ function Profile() {
     email: email,
   });
 
+  // Redirect to login if token is lost (cross-tab logout)
   useEffect(() => {
     if (!token) {
-      navigate("/");
+      toast.error("Session expired. Please login again.");
+      navigate("/login", { replace: true });
     }
   }, [token, navigate]);
+
+  // Update local state when Redux state changes
+  useEffect(() => {
+    setData({
+      name: name,
+      email: email,
+    });
+  }, [name, email]);
 
   const handleProfileSubmit = (e) => {
     e.preventDefault();
@@ -157,7 +167,7 @@ function Profile() {
                     ) : (
                       <div className="w-40 h-40 rounded-full bg-gray-800 border-4 border-gray-700 flex items-center justify-center">
                         <span className="text-6xl text-white font-bold">
-                          {name?.charAt(0)?.toUpperCase()}
+                          {name?.charAt(0)?.toUpperCase() || 'U'}
                         </span>
                       </div>
                     )}
@@ -241,11 +251,11 @@ function Profile() {
                   <div className="space-y-6">
                     <div className="bg-gray-800 border-2 border-gray-700 rounded-lg p-5">
                       <label className="block text-gray-400 text-sm font-semibold mb-2">NAME</label>
-                      <p className="text-white text-xl font-semibold">{name}</p>
+                      <p className="text-white text-xl font-semibold">{name || 'Not set'}</p>
                     </div>
                     <div className="bg-gray-800 border-2 border-gray-700 rounded-lg p-5">
                       <label className="block text-gray-400 text-sm font-semibold mb-2">EMAIL</label>
-                      <p className="text-white text-xl font-semibold">{email}</p>
+                      <p className="text-white text-xl font-semibold">{email || 'Not set'}</p>
                     </div>
                     <button
                       onClick={() => setIsEditing(true)}

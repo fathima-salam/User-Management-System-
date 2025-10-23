@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { clearError, logout } from '../../../redux-toolkit/userDataReducer'
@@ -8,20 +8,24 @@ import { toast } from "react-hot-toast";
 function Home() {
     const navigate = useNavigate()
     const dispatch = useDispatch()
+    
+    const token = useSelector((state) => state.userData.token)
+    const name = useSelector((state) => state.userData.name)
+    const err = useSelector((state) => state.userData.error);
+    const loading = useSelector((state) => state.userData.loading)
+
+    // Redirect to login if token is lost (due to cross-tab logout)
+    useEffect(() => {
+        if (!token) {
+            navigate('/login', { replace: true });
+        }
+    }, [token, navigate]);
+
     function handleLogout() {
         dispatch(logout());
         toast.success('Logout Successfully')
         navigate('/login')
     }
-    const token = useSelector((state) => {
-        return state.userData.token
-    })
-    const name = useSelector((state) => {
-        return state.userData.name
-    })
-
-    const err = useSelector((state) => state.userData.error);
-    const loading = useSelector((state) => state.userData.loading)
 
     if (err) {
         return (
@@ -97,7 +101,7 @@ function Home() {
                 <div className="max-w-screen-xl mx-auto px-4 py-16">
                     <div className="text-center mb-16">
                         <h1 className='text-5xl font-bold text-white mb-4'>
-                            Welcome Back, <span className="text-gray-300">{name ? name : 'Guest'}</span>
+                            Welcome Back, <span className="text-gray-300">{name || 'Guest'}</span>
                         </h1>
                         <p className="text-gray-400 text-lg">Your personalized dashboard for managing your account</p>
                     </div>

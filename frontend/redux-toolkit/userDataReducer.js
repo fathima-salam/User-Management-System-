@@ -1,33 +1,39 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from 'axios'
+import axios from 'axios';
+
+// ✅ REGISTER
 export const setUserData = createAsyncThunk('user/setUserData', async (userData, { rejectWithValue }) => {
     try {
         const response = await axios.post('http://localhost:5001/api/user/register', userData);
-        return response.data
-
+        return response.data;
     } catch (error) {
         return rejectWithValue(error.response?.data || 'something went wrong in register data');
     }
-})
+});
 
+// ✅ LOGIN
 export const loginUserData = createAsyncThunk('user/loginUserData', async (userData, { rejectWithValue }) => {
     try {
         const response = await axios.post('http://localhost:5001/api/user/login', userData);
         return response.data;
     } catch (error) {
-        return rejectWithValue(error.response?.data || 'something went wrong in login data')
+        return rejectWithValue(error.response?.data || 'something went wrong in login data');
     }
-})
+});
 
+// ✅ UPDATE USER DATA
 export const updateUserData = createAsyncThunk('user/updateUserData', async ({ data, id, token }, { rejectWithValue }) => {
     try {
-        const response = await axios.put(`http://localhost:5001/api/user/update-data/${id}`, data, { headers: { Authorization: `Bearer ${token}`, } });
+        const response = await axios.put(`http://localhost:5001/api/user/update-data/${id}`, data, { 
+            headers: { Authorization: `Bearer ${token}` } 
+        });
         return response.data;
     } catch (error) {
-        return rejectWithValue(error.response?.data || 'something went wrong in update data')
+        return rejectWithValue(error.response?.data || 'something went wrong in update data');
     }
-})
+});
 
+// ✅ UPDATE PROFILE IMAGE
 export const imageUpdateUpload = createAsyncThunk('user/imageUpdateUpload', async ({ data, token }, { rejectWithValue }) => {
     try {
         const response = await axios.post(`http://localhost:5001/api/user/update-profile`, data, {
@@ -37,9 +43,21 @@ export const imageUpdateUpload = createAsyncThunk('user/imageUpdateUpload', asyn
         });
         return response.data;
     } catch (error) {
-        return rejectWithValue(error.response?.data || 'something went wrong in image uploading')
+        return rejectWithValue(error.response?.data || 'something went wrong in image uploading');
     }
-})
+});
+
+// ✅ FETCH USER PROFILE (for refresh and sync)
+export const fetchUserProfile = createAsyncThunk('user/fetchUserProfile', async (token, { rejectWithValue }) => {
+    try {
+        const response = await axios.get('http://localhost:5001/api/user/profile', {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        return response.data;
+    } catch (error) {
+        return rejectWithValue(error.response?.data || 'something went wrong in fetching user profile');
+    }
+});
 
 const userDataSlice = createSlice({
     name: "userData",
@@ -65,17 +83,37 @@ const userDataSlice = createSlice({
             state.profile_Image = '';
             state.isAuthenticated = false;
             state.isAdmin = false;
+
             localStorage.removeItem("user");
             localStorage.removeItem("token");
+
+            try {
+                const channel = new BroadcastChannel('auth_channel');
+                channel.postMessage({ type: 'LOGOUT', source: 'user' });
+                channel.close();
+            } catch (err) {
+                console.log('BroadcastChannel not supported');
+            }
+
+            localStorage.setItem('logout-event', Date.now().toString());
+            localStorage.removeItem('logout-event');
         },
-        clearError:(state)=>{
-            state.error=null
+        clearError: (state) => {
+            state.error = null;
+        },
+        syncLogout: (state) => {
+            state.token = null;
+            state.name = '';
+            state.email = '';
+            state._id = '';
+            state.profile_Image = '';
+            state.isAuthenticated = false;
+            state.isAdmin = false;
         }
     },
     extraReducers: (builder) => {
         builder
-
-            //register
+            // ✅ REGISTER
             .addCase(setUserData.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -85,8 +123,8 @@ const userDataSlice = createSlice({
                 state.token = token;
                 state.loading = false;
                 state.name = user.name;
-                state.profile_Image = user.profileImage
-                state._id = user._id
+                state.profile_Image = user.profileImage;
+                state._id = user._id;
                 state.email = user.email;
                 state.isAuthenticated = !!token;
                 state.isAdmin = user.isAdmin;
@@ -99,7 +137,7 @@ const userDataSlice = createSlice({
                 state.error = action.payload;
             })
 
-            //login
+            // ✅ LOGIN
             .addCase(loginUserData.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -110,7 +148,7 @@ const userDataSlice = createSlice({
                 state.loading = false;
                 state.name = user.name;
                 state._id = user._id;
-                state.profile_Image = user.profileImage
+                state.profile_Image = user.profileImage;
                 state.email = user.email;
                 state.isAuthenticated = !!token;
                 state.isAdmin = user.isAdmin;
@@ -123,8 +161,7 @@ const userDataSlice = createSlice({
                 state.error = action.payload;
             })
 
-            //update
-
+            // ✅ UPDATE USER DATA
             .addCase(updateUserData.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -134,10 +171,9 @@ const userDataSlice = createSlice({
                 state.loading = false;
                 state.name = user.name;
                 state._id = user._id;
-                state.profile_Image = user.profileImage
+                state.profile_Image = user.profileImage;
                 state.email = user.email;
                 state.isAdmin = user.isAdmin;
-
 
                 localStorage.setItem("user", JSON.stringify(user));
             })
@@ -146,8 +182,7 @@ const userDataSlice = createSlice({
                 state.error = action.payload;
             })
 
-            //updatae image
-
+            // ✅ UPDATE PROFILE IMAGE
             .addCase(imageUpdateUpload.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -157,10 +192,9 @@ const userDataSlice = createSlice({
                 state.loading = false;
                 state.name = user.name;
                 state._id = user._id;
-                state.profile_Image = user.profileImage
+                state.profile_Image = user.profileImage;
                 state.email = user.email;
                 state.isAdmin = user.isAdmin;
-
 
                 localStorage.setItem("user", JSON.stringify(user));
             })
@@ -168,9 +202,31 @@ const userDataSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             })
-    }
+
+            // ✅ FETCH USER PROFILE
+            .addCase(fetchUserProfile.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            // ✅ FETCH USER PROFILE - always update localStorage!
+.addCase(fetchUserProfile.fulfilled, (state, action) => {
+    const { user } = action.payload;
+    state.loading = false;
+    state.name = user.name;
+    state._id = user._id;
+    state.profile_Image = user.profileImage;
+    state.email = user.email;
+    state.isAdmin = user.isAdmin;
+    // Overwrite localStorage with fresh server data every time!
+    localStorage.setItem("user", JSON.stringify(user));
 })
 
-export const { logout ,clearError } = userDataSlice.actions;
+            .addCase(fetchUserProfile.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            });
+    }
+});
 
-export default userDataSlice.reducer
+export const { logout, clearError, syncLogout } = userDataSlice.actions;
+export default userDataSlice.reducer;

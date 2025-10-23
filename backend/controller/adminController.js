@@ -95,7 +95,7 @@ export const addUser = async (req, res) => {
             return res.status(400).json({ message: "Email already exists" });
         }
         console.error("Add user error:", error);
-        res.status(500).json({ message: error || 'server error' });
+        res.status(500).json({ message:  error.message || 'server error' });
     }
 };
 
@@ -135,7 +135,7 @@ export const updateUser = async (req, res) => {
             return res.status(400).json({ message: "Email already exists" });
         }
         console.error("updating error:", error);
-        res.status(500).json({ message: error || 'server error' });
+        res.status(500).json({ message:  error.message || 'server error' });
     }
 }
 
