@@ -18,10 +18,6 @@ router.post('/update-profile', protect, (req, res, next) => {
             return res.status(400).json({ message: `Upload error: ${err.message}` });
         }
         
-        console.log("After multer middleware:");
-        console.log("req.file:", req.file);
-        console.log("req.body:", req.body);
-        
         next();
     });
 }, updateProfile);

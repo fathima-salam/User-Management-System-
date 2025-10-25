@@ -189,6 +189,9 @@ function Dashboard() {
                         <thead className="bg-gray-100">
                             <tr>
                                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    SI
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                     Name
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
@@ -203,8 +206,11 @@ function Dashboard() {
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {currentUsers.map((user) => (
+                            {currentUsers.map((user,i) => (
                                 <tr key={user._id} className="hover:bg-gray-50 transition">
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="text-sm text-gray-500">{i+1}</div>
+                                    </td>
                                     <td className="px-6 py-4 whitespace-nowrap flex items-center">
                                         <div className="h-10 w-10 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center shadow">
                                             {user.profileImage ? (

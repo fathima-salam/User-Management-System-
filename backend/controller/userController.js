@@ -141,13 +141,6 @@ export const updateData = async (req, res) => {
 export const updateProfile = async (req, res) => {
     try {
 
-        console.log("=== DEBUG INFO ===");
-        console.log("Content-Type:", req.headers['content-type']);
-        console.log("req.body:", req.body);
-        console.log("req.file:", req.file);
-        console.log("req.files:", req.files);
-        console.log("==================");
-
         if (!req.file) {
             return res.status(400).json({ message: "No file uploaded. Please select an image." });
         }

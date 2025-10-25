@@ -19,52 +19,12 @@ function Home() {
         if (!token) {
             navigate('/login', { replace: true });
         }
-    }, [token, navigate]);
+    },[token, navigate]);
 
     function handleLogout() {
         dispatch(logout());
         toast.success('Logout Successfully')
         navigate('/login')
-    }
-
-    if (err) {
-        return (
-            <div className="min-h-screen flex justify-center items-center bg-gray-50 p-4">
-                <div className="max-w-lg w-full bg-white border-l-4 border-red-500 shadow-lg rounded-lg p-6 relative">
-
-                    <div className="flex items-start">
-                        <div className="flex-shrink-0">
-                            <svg
-                                className="h-6 w-6 text-red-500"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 5.636l-12.728 12.728m12.728 0L5.636 5.636" />
-                            </svg>
-                        </div>
-
-                        <div className="ml-3 flex-1">
-                            <h3 className="text-lg font-semibold text-red-700">Something went wrong</h3>
-                            <p className="mt-2 text-sm text-gray-700">
-                                {err.message?.errors?.email?.message || err.message?.message || "Unknown error occurred"}
-                            </p>
-                        </div>
-
-                        <button
-                            onClick={() => {
-                                dispatch(clearError());
-                            }}
-                            className="ml-4 text-gray-400 hover:text-gray-600 transition"
-                        >
-                            <span className="sr-only">Close</span>
-                            ✕
-                        </button>
-                    </div>
-                </div>
-            </div>
-        );
     }
 
     return (
@@ -101,7 +61,7 @@ function Home() {
                 <div className="max-w-screen-xl mx-auto px-4 py-16">
                     <div className="text-center mb-16">
                         <h1 className='text-5xl font-bold text-white mb-4'>
-                            Welcome Back, <span className="text-gray-300">{name || 'Guest'}</span>
+                            Welcome Back, <span className="text-gray-300">{name || 'Guest'} </span>
                         </h1>
                         <p className="text-gray-400 text-lg">Your personalized dashboard for managing your account</p>
                     </div>

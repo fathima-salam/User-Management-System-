@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from 'axios';
 
-// ✅ REGISTER
 export const setUserData = createAsyncThunk('user/setUserData', async (userData, { rejectWithValue }) => {
     try {
         const response = await axios.post('http://localhost:5001/api/user/register', userData);
@@ -11,7 +10,6 @@ export const setUserData = createAsyncThunk('user/setUserData', async (userData,
     }
 });
 
-// ✅ LOGIN
 export const loginUserData = createAsyncThunk('user/loginUserData', async (userData, { rejectWithValue }) => {
     try {
         const response = await axios.post('http://localhost:5001/api/user/login', userData);
@@ -21,7 +19,6 @@ export const loginUserData = createAsyncThunk('user/loginUserData', async (userD
     }
 });
 
-// ✅ UPDATE USER DATA
 export const updateUserData = createAsyncThunk('user/updateUserData', async ({ data, id, token }, { rejectWithValue }) => {
     try {
         const response = await axios.put(`http://localhost:5001/api/user/update-data/${id}`, data, { 
@@ -33,7 +30,6 @@ export const updateUserData = createAsyncThunk('user/updateUserData', async ({ d
     }
 });
 
-// ✅ UPDATE PROFILE IMAGE
 export const imageUpdateUpload = createAsyncThunk('user/imageUpdateUpload', async ({ data, token }, { rejectWithValue }) => {
     try {
         const response = await axios.post(`http://localhost:5001/api/user/update-profile`, data, {
@@ -47,7 +43,6 @@ export const imageUpdateUpload = createAsyncThunk('user/imageUpdateUpload', asyn
     }
 });
 
-// ✅ FETCH USER PROFILE (for refresh and sync)
 export const fetchUserProfile = createAsyncThunk('user/fetchUserProfile', async (token, { rejectWithValue }) => {
     try {
         const response = await axios.get('http://localhost:5001/api/user/profile', {
@@ -113,7 +108,6 @@ const userDataSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            // ✅ REGISTER
             .addCase(setUserData.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -137,7 +131,6 @@ const userDataSlice = createSlice({
                 state.error = action.payload;
             })
 
-            // ✅ LOGIN
             .addCase(loginUserData.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -161,7 +154,6 @@ const userDataSlice = createSlice({
                 state.error = action.payload;
             })
 
-            // ✅ UPDATE USER DATA
             .addCase(updateUserData.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -182,7 +174,6 @@ const userDataSlice = createSlice({
                 state.error = action.payload;
             })
 
-            // ✅ UPDATE PROFILE IMAGE
             .addCase(imageUpdateUpload.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -203,12 +194,10 @@ const userDataSlice = createSlice({
                 state.error = action.payload;
             })
 
-            // ✅ FETCH USER PROFILE
             .addCase(fetchUserProfile.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
-            // ✅ FETCH USER PROFILE - always update localStorage!
 .addCase(fetchUserProfile.fulfilled, (state, action) => {
     const { user } = action.payload;
     state.loading = false;
@@ -217,7 +206,6 @@ const userDataSlice = createSlice({
     state.profile_Image = user.profileImage;
     state.email = user.email;
     state.isAdmin = user.isAdmin;
-    // Overwrite localStorage with fresh server data every time!
     localStorage.setItem("user", JSON.stringify(user));
 })
 

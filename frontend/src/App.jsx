@@ -11,7 +11,6 @@ import Profile from './pages/Profile/Profile';
 import NotFound from './pages/NotFound/NotFound';
 import AdminLogin from './pages/AdminLogin/AdminLogin';
 import DashBoard from './pages/Dashboard/DashBoard';
-
 import { fetchUserProfile, syncLogout as userSyncLogout, logout as userLogout } from '../redux-toolkit/userDataReducer';
 import { syncLogout as adminSyncLogout, logout as adminLogout } from '../redux-toolkit/adminDataReducer';
 
@@ -50,7 +49,6 @@ function App() {
         };
     }, [dispatch]);
 
-    // ✅ Handle logout sync between tabs
     useEffect(() => {
         let channel;
         try {
@@ -114,11 +112,17 @@ function App() {
         };
     }, [dispatch]);
 
-    // ✅ Fetch user data on refresh if token exists
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (token) {
-            dispatch(fetchUserProfile(token));  // This keeps Redux data updated
+            dispatch(fetchUserProfile(token))
+                .unwrap()
+                .catch((error) => {
+                    console.error("Failed to fetch user profile:", error);
+                    if (error.message?.includes('token') || error.message?.includes('unauthorized')) {
+                        dispatch(userLogout());
+                    }
+                });
         }
     }, [dispatch]);
 

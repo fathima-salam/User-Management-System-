@@ -5,7 +5,7 @@ export const fetchUsers = createAsyncThunk('admin/fetchUsers', async (token, { r
     try {
         const response = await axios.get('http://localhost:5001/api/admin/dataFetching', { headers: { Authorization: `Bearer ${token}` } });
         return response.data;
-    } catch (error) {
+    } catch (error) { 
         return rejectWithValue(error.response?.data || 'something went wrong in fetching data')
     }
 })

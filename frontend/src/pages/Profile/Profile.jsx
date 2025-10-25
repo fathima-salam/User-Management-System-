@@ -24,15 +24,13 @@ function Profile() {
     email: email,
   });
 
-  // Redirect to login if token is lost (cross-tab logout)
   useEffect(() => {
     if (!token) {
-      toast.error("Session expired. Please login again.");
+      toast.error("Please login.");
       navigate("/login", { replace: true });
     }
   }, [token, navigate]);
 
-  // Update local state when Redux state changes
   useEffect(() => {
     setData({
       name: name,

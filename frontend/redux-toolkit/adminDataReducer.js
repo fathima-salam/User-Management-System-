@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from 'axios';
 
-// Export as 'adminLogin' to match your existing imports
 export const adminLogin = createAsyncThunk('admin/login', async (credentials, { rejectWithValue }) => {
     try {
         const response = await axios.post('http://localhost:5001/api/admin/login', credentials);
@@ -26,18 +25,15 @@ const adminDataSlice = createSlice({
     },
     reducers: {
         logout: (state) => {
-            // Clear Redux state
             state.token = null;
             state.email = '';
             state._id = '';
             state.isAuthenticated = false;
             state.isAdmin = false;
             
-            // Clear localStorage
             localStorage.removeItem("admin");
             localStorage.removeItem("adminToken");
             
-            // Broadcast logout to other tabs using BroadcastChannel
             try {
                 const channel = new BroadcastChannel('auth_channel');
                 channel.postMessage({ type: 'LOGOUT', source: 'admin' });
@@ -46,14 +42,12 @@ const adminDataSlice = createSlice({
                 console.log('BroadcastChannel not supported');
             }
             
-            // Also trigger storage event for older browsers
             localStorage.setItem('logout-event', Date.now().toString());
             localStorage.removeItem('logout-event');
         },
         clearError: (state) => {
             state.error = null;
         },
-        // New action to handle logout from other tabs (doesn't broadcast again)
         syncLogout: (state) => {
             state.token = null;
             state.email = '';
@@ -64,7 +58,6 @@ const adminDataSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            // Admin login
             .addCase(adminLogin.pending, (state) => {
                 state.loading = true;
                 state.error = null;
